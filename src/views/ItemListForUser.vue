@@ -27,6 +27,8 @@
 <script>
 import api from "../api";
 import ItemDialog from "../components/ItemDialog";
+import SockJS from "sockjs-client";
+import Stomp from "webstomp-client"
 
 export default {
   name: "ItemList",
@@ -34,6 +36,9 @@ export default {
   data() {
     return {
       items: [],
+      received_messages: [],
+      send_message: null,
+      connected:false,
       search: "",
       headers: [
         {
@@ -57,10 +62,44 @@ export default {
       this.selectedItem = {};
       this.items = await api.items.allItemsForUser();
     },
+
+  connect() {
+    this.socket = new SockJS("http://localhost:8088/api/websocket");
+    this.stompClient = Stomp.over(this.socket);
+    this.stompClient.connect(
+        {},
+        (frame) => {
+          this.connected = true;
+          console.log(frame);
+          this.stompClient.subscribe("/topic", (tick) => {
+            console.log(tick);
+            const str = tick.body.split(":");
+            if (
+                JSON.parse(localStorage.getItem("user")).id === Number(str[0])
+            ) {
+              alert(tick.body);
+            }
+            this.received_messages.push(JSON.parse(tick.body).content);
+          });
+        },
+        (error) => {
+          console.log(error);
+          this.connected = false;
+        }
+    );
+  },
+  disconnect() {
+    if (this.stompClient) {
+      this.stompClient.disconnect();
+    }
+    this.connected=false;
+  },
   },
   created() {
     this.refreshList();
+    this.connect();
   },
+
 };
 </script>
 
