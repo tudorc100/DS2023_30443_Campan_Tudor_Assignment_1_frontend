@@ -23,13 +23,12 @@
 </template>
 
 <script>
-import users from "../api/services/users";
 import SockJS from "sockjs-client";
 import Stomp from "webstomp-client";
 import ChatDialog from "@/components/ChatDialog";
 let user = JSON.parse(localStorage.getItem("user"));
 export default {
-  name: "DeviceList",
+  name: "Chat",
   components: {ChatDialog},
   data() {
     return {
@@ -57,9 +56,11 @@ export default {
       this.stompClient.connect(
           {},
           frame => {
+            console.log(frame);
             this.connected = true;
             this.stompClient.subscribe("/topic/greetings/" + this.loggedUser.id, tick => {
               this.received_messages.push(JSON.parse(tick.body));
+              alert(tick.body);
             });
           },
           error => {

@@ -5,6 +5,7 @@ import ItemList from "../views/ItemList.vue";
 import { auth as store } from "../store/auth.module";
 import Login from "../views/Login";
 import ItemListForUser from "@/views/ItemListForUser";
+import Chat from "@/views/Chat.vue";
 
 Vue.use(VueRouter);
 
@@ -31,6 +32,18 @@ const routes = [
     path: "/items",
     name: "Items",
     component: ItemList,
+    beforeEnter: (to, from, next) => {
+      if (store.state.status.loggedIn) {
+        next();
+      } else {
+        next({ name: "Home" });
+      }
+    },
+  },
+  {
+    path: "/chat",
+    name: "Chat",
+    component: Chat,
     beforeEnter: (to, from, next) => {
       if (store.state.status.loggedIn) {
         next();
