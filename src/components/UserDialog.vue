@@ -13,8 +13,8 @@
           <v-text-field v-model="user.username" label="Username" />
           <v-text-field v-model="user.email" label="Email" />
           <v-text-field v-model="user.password" label="Password" />
-
         </v-form>
+        <input v-model="message" placeholder="message" />
         <v-card-actions>
           <v-btn @click="persist">
             {{ isNew ? "Create" : "Save" }}

@@ -29,4 +29,11 @@ export default {
       return response.data;
     });
   },
+  sendMessage(username,msg) {
+    return HTTP.post(BASE_URL + "/users/" + username, msg, {
+      headers: authHeader(),
+    }).then((response) => {
+      return response.data;
+    });
+  }
 }
